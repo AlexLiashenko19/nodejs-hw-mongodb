@@ -5,9 +5,12 @@ import pino from 'pino-http';
 import { env } from './utils/env.js';
 import { getAllContacts, getContactById } from './services/contacts.js';
 
+import contactsRouter from './routers/contacts.js';
+import { errorHandler } from './middlewares/errorHandler.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
 dotenv.config();
 
-const PORT = Number(env('PORT', '3000'));
+const PORT = Number(env('PORT', '5000'));
 
 export function setupServer() {
   const app = express();
@@ -56,6 +59,12 @@ export function setupServer() {
       console.error(error.message);
     }
   });
+
+  app.use(contactsRouter);
+
+  app.use('*', notFoundHandler);
+
+  app.use(errorHandler);
 
   app.use('*', (req, res, next) => {
     res.status(404).json({
