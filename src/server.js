@@ -7,7 +7,7 @@ import { getAllContacts, getContactById } from './services/contacts.js';
 
 dotenv.config();
 
-const PORT = Number(env('PORT', '3000'));
+const PORT = Number(env('PORT', '5000'));
 
 export function setupServer() {
   const app = express();
