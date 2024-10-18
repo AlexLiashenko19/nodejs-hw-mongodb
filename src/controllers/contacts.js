@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Contact from "../model/contact.model.js";
 import { getAllContacts, getContactById } from "../services/contacts.js";
+import createHttpError from "http-errors";
 
 export const getContactsController = async (req, res) => {
     const allContacts = await getAllContacts();
@@ -18,10 +19,7 @@ export const getContactByIdController = async (req, res) => {
       const contact = await getContactById(contactId);
 
       if (contact === null) {
-        res.status(404).json({
-          message: 'Contact not found',
-        });
-        return;
+        throw createHttpError(404, `Contact not found`);
       }
       res.json({
         status: 200,
@@ -39,7 +37,7 @@ export const getContactByIdController = async (req, res) => {
 export const createContactController = async (req, res) => {
 	const contact = req.body;
 
-	if (!contact.name || !contact.phoneNumber || !contact.email || !contact.isFavourite || !contact.contactType) {
+	if (!contact.name || !contact.phoneNumber || !contact.contactType) {
 		return res.status(400).json({ success: false, message: "Please provide all fields" });
 	}
 
@@ -47,7 +45,10 @@ export const createContactController = async (req, res) => {
 
 	try {
 		await newContact.save();
-		res.status(201).json({ success: true, data: newContact });
+		res.status(201).json({ 
+      status: 201,
+      message: "Successfully created a contact!",
+      data: newContact });
 	} catch (error) {
 		console.error("Error in Create product:", error.message);
 		res.status(500).json({ success: false, message: "Server Error" });
@@ -60,11 +61,15 @@ export const updateContactController = async (req, res) => {
     const contact = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(contactId)) {
-        return res.status(404).json({ success: false, message: "Invalid Contact Id" });
+      throw createHttpError(404, `Contact not found`);
     }
+
     try {
 		const updatedContact = await Contact.findByIdAndUpdate(contactId, contact, { new: true });
-		res.status(200).json({ success: true, data: updatedContact });
+		res.status(200).json({ 
+      status: 200,
+	    message: "Successfully patched a contact!",
+	    data: updatedContact});
 	} catch (error) {
 		console.log("error in deleting contact:", error.message);
 		res.status(500).json({ success: false, message: "Server Error" });
@@ -75,11 +80,14 @@ export const deleteContactController = async (req, res) => {
     const {contactId} = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(contactId)) {
-        return res.status(404).json({ success: false, message: "Invalid Contact Id" });
+      throw createHttpError(404, `Contact not found`);
     }
+
     try {
 		await Contact.findByIdAndDelete(contactId);
-		res.status(200).json({ success: true, message: "Contact deleted" });
+		res.status(204).json({ 
+      status: 204,
+	    message: "Successfully patched a contact!" });
 	} catch (error) {
 		console.log("error in deleting contact:", error.message);
 		res.status(500).json({ success: false, message: "Server Error" });
