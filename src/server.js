@@ -3,10 +3,11 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { env } from './utils/env.js';
 
-import contactsRouter from './routers/contacts.js';
+import router from './routers/index.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import logger from './middlewares/logger.js';
+import cookieParser from 'cookie-parser';
 dotenv.config();
 
 const PORT = Number(env('PORT', '3000'));
@@ -15,10 +16,11 @@ export function setupServer() {
   const app = express();
 
   app.use(logger);
-  app.use(cors());
   app.use(express.json());
+  app.use(cors());
+  app.use(cookieParser());
 
-  app.use("/contacts", contactsRouter);
+  app.use(router);
 
   app.use('*', notFoundHandler);
 
