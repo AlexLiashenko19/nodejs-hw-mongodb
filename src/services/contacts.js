@@ -2,7 +2,7 @@ import { SORT_ORDER } from "../constants/index.js";
 import Contact from "../model/contact.model.js";
 import { calculatePaginationData } from "../utils/calculatePaginationData.js";
 
-export const getAllContacts = async({
+export const getAllContacts = async ({
   perPage = 10, 
   page = 1,
   sortOrder = SORT_ORDER.ASC,
@@ -12,10 +12,11 @@ export const getAllContacts = async({
   const limit = perPage;
   const skip = (page - 1) * perPage;
 
-  const contactQuery = Contact.find({ userId });  
-  const contactCount = await contactQuery.countDocuments();
+  // Створіть новий запит для підрахунку документів
+  const contactCount = await Contact.countDocuments({ userId });
 
-  const contacts = await contactQuery
+  // Тепер створіть запит для отримання контактів
+  const contacts = await Contact.find({ userId })
     .skip(skip)
     .limit(limit)
     .sort({ [sortBy]: sortOrder })

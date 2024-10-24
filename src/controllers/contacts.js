@@ -6,7 +6,6 @@ import { parseSortParams } from '../utils/parseSortParams.js';
 
 export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
-
   const { sortBy, sortOrder } = parseSortParams(req.query);
 
   const contacts = await getAllContacts({
@@ -14,6 +13,7 @@ export const getContactsController = async (req, res) => {
     perPage,
     sortBy,
     sortOrder,
+    userId: req.user._id,
   });
   res.status(200).json({
     status: 200,
@@ -24,7 +24,7 @@ export const getContactsController = async (req, res) => {
 
 export const getContactByIdController = async (req, res) => {
   const { contactId } = req.params;
-  const contact = await getContactById(contactId);
+  const contact = await getContactById(contactId, req.user._id);
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
   }
@@ -37,7 +37,7 @@ export const getContactByIdController = async (req, res) => {
 
 export const deleteContactController = async (req, res) => {
   const { contactId } = req.params;
-  const removedContact = await deleteContactById(contactId);
+  const removedContact = await deleteContactById(contactId, req.user._id);
   if (!removedContact) {
     throw createHttpError(404, 'Contact not found');
   }
@@ -53,7 +53,7 @@ export const createContactController = async (req, res) => {
       'name, phoneNumber, and contactType are required fields',
     );
   }
-  const createdContact = await createContact(req.body);
+  const createdContact = await createContact(req.body, req.user._id);
 
   res.status(201).json({
     status: 201,
@@ -65,15 +65,26 @@ export const createContactController = async (req, res) => {
 export const updateContactController = async (req, res) => {
   const { contactId } = req.params;
   const { body } = req;
-  const updatedContactRawData = await updateContact(contactId, body);
 
-  if (!updatedContactRawData.value) {
-    throw createHttpError(404, 'Contact not found');
+  try {
+    const updatedContact = await updateContact(contactId, body, req.user._id);
+    if (!updatedContact) {
+      return res.status(404).json({
+        status: 404,
+        message: 'Contact not found',
+      });
+    }
+
+    res.json({
+      status: 200,
+      message: 'Successfully updated a contact!',
+      data: updatedContact,
+    });
+  } catch (error) {
+    console.error('Error updating contact:', error);
+    res.status(500).json({
+      status: 500,
+      message: 'Internal Server Error',
+    });
   }
-
-  res.json({
-    status: 200,
-    message: 'Successfully patched a contact!',
-    data: updatedContactRawData.value,
-  });
 };
