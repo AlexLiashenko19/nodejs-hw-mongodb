@@ -46,6 +46,8 @@ export const deleteContactController = async (req, res) => {
 };
 
 export const createContactController = async (req, res) => {
+  const userId = req.user._id;
+
   const { name, phoneNumber, contactType } = req.body;
   if (!name || !phoneNumber || !contactType) {
     throw createHttpError(
@@ -53,7 +55,7 @@ export const createContactController = async (req, res) => {
       'name, phoneNumber, and contactType are required fields',
     );
   }
-  const createdContact = await createContact(req.body, req.user._id);
+  const createdContact = await createContact(req.body, userId);
 
   res.status(201).json({
     status: 201,

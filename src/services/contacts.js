@@ -12,10 +12,8 @@ export const getAllContacts = async ({
   const limit = perPage;
   const skip = (page - 1) * perPage;
 
-  // Створіть новий запит для підрахунку документів
   const contactCount = await Contact.countDocuments({ userId });
 
-  // Тепер створіть запит для отримання контактів
   const contacts = await Contact.find({ userId })
     .skip(skip)
     .limit(limit)
