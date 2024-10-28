@@ -2,6 +2,9 @@ import { createContact, deleteContactById, getAllContacts, getContactById, updat
 import createHttpError from "http-errors";
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { env } from '../utils/env.js';
 
 
 export const getContactsController = async (req, res) => {
@@ -64,17 +67,29 @@ export const createContactController = async (req, res) => {
   });
 };
 
-export const updateContactController = async (req, res) => {
+export const updateContactController = async (req, res, next) => {
   const { contactId } = req.params;
-  const { body } = req;
+  const photo = req.file;
+
+  let photoUrl;
+
+  if (photo) {
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
 
   try {
-    const updatedContact = await updateContact(contactId, body, req.user._id);
+    const updatedContact = await updateContact(contactId, {
+      ...req.body,
+      photo: photoUrl,
+    }, req.user._id);
+
     if (!updatedContact) {
-      return res.status(404).json({
-        status: 404,
-        message: 'Contact not found',
-      });
+      next(createHttpError(404, 'Contact not found'));
+      return;
     }
 
     res.json({
@@ -84,9 +99,6 @@ export const updateContactController = async (req, res) => {
     });
   } catch (error) {
     console.error('Error updating contact:', error);
-    res.status(500).json({
-      status: 500,
-      message: 'Internal Server Error',
-    });
+    next(createHttpError(500, 'Internal Server Error'));
   }
 };
