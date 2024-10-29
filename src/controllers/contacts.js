@@ -58,13 +58,32 @@ export const createContactController = async (req, res) => {
       'name, phoneNumber, and contactType are required fields',
     );
   }
-  const createdContact = await createContact(req.body, userId);
 
-  res.status(201).json({
-    status: 201,
-    message: 'Successfully created a contact!',
-    data: createdContact,
-  });
+  let photoUrl;
+
+  if (req.file) {
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(req.file);
+    } else {
+      photoUrl = await saveFileToUploadDir(req.file);
+    }
+  }
+
+  try {
+    const createdContact = await createContact({
+      ...req.body,
+      photo: photoUrl,
+    }, userId);
+
+    res.status(201).json({
+      status: 201,
+      message: 'Successfully created a contact!',
+      data: createdContact,
+    });
+  } catch (error) {
+    console.error('Error creating contact:', error);
+    throw createHttpError(500, 'Internal Server Error');
+  }
 };
 
 export const updateContactController = async (req, res, next) => {
