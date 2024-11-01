@@ -12,6 +12,7 @@ import { sendEmail } from '../utils/sendMail.js';
 import  USER  from '../model/user.model.js';
 import SESSION from '../model/session.model.js';
 import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/index.js';
+import { getFullNameFromGoogleTokenPayload, validateCode } from '../utils/googleOAuth2.js';
 
 export const registerUser = async (payload) => {
     const user = await USER.findOne({ email: payload.email });
@@ -158,4 +159,26 @@ const createSession = () => {
       { _id: user._id },
       { password: encryptedPassword },
     );
-  };
+};
+
+export const loginOrSignupWithGoogle = async (code) => {
+  const loginTiket = await validateCode(code);
+  const payload = loginTiket.validateCode();
+
+  let user = await USER.findOne({ email: payload.email});
+  if (!user) {
+    const password = await bcrypt.hash(randomBytes(10), 10);
+    user = await USER.create({ 
+      email: payload.email,
+      name: getFullNameFromGoogleTokenPayload(payload), 
+      password
+    });
+  }
+
+    const newSession = createSession();
+
+    return await SESSION.create({
+      userId: user._id,
+      ...newSession
+    });
+};
