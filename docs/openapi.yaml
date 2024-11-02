@@ -14,7 +14,7 @@ tags:
   - name: Contacts
     description: Operations about contacts
 servers:
-  - url: https://nodejs-hw-mongodb-qggc.onrender.com
+  - url: https://nodejs-hw-mongodb-hyy4.onrender.com/api-docs
   # - url: localhost:3000
 paths:
   /contacts:
