@@ -24,121 +24,60 @@
       "description": "Operations about contacts"
     }
   ],
-  "paths": {
-    "/contacts": {
-      "post": {
-        "tags": [
-          "Contacts"
-        ],
-        "summary": "Create a new contact",
-        "operationId": "createContact",
-        "description": "Create a new contact",
-        "security": [
-          {
-            "bearerAuth": []
+"paths": {
+  "/contacts": {
+    "post": {
+      "tags": [
+        "Contacts"
+      ],
+      "summary": "Create a new contact",
+      "operationId": "createContact",
+      "description": "Create a new contact",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/contact"
+            }
           }
-        ],
-        "requestBody": {
-          "required": true,
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Successfully created a contact",
           "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "name",
-                  "phoneNumber",
-                  "contactType"
-                ],
-                "properties": {
-                  "name": {
-                    "description": "Contact's name",
-                    "type": "string"
-                  },
-                  "phoneNumber": {
-                    "description": "Contact's phone number",
-                    "type": "string"
-                  },
-                  "email": {
-                    "description": "Contact's email",
-                    "type": "string"
-                  },
-                  "isFavourite": {
-                    "description": "True if contact is favourite",
-                    "type": "boolean"
-                  },
-                  "contactType": {
-                    "description": "Contact's type",
-                    "type": "string",
-                    "enum": [
-                      "work",
-                      "home",
-                      "personal"
-                    ]
-                  },
-                  "photo": {
-                    "description": "Contact's photo file (*.jpg, *.png)",
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              },
-              "encoding": {
-                "photo": {
-                  "contentType": "image/*"
-                }
-              },
-              "examples": {
-                "example1": {
-                  "summary": "Example with photo",
-                  "value": {
-                    "name": "Mel Gibson",
-                    "phoneNumber": "+380123456789",
-                    "email": "MEEELLL@ui.com",
-                    "isFavourite": true,
-                    "contactType": "work",
-                    "photo": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTExMVF..."
-                  }
-                }
-              }
-            },
             "application/json": {
               "schema": {
                 "type": "object",
-                "$ref": "#/components/schemas/contact"
+                "properties": {
+                  "status": {
+                    "type": "integer",
+                    "example": 201
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "Successfully created a contact"
+                  },
+                  "data": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/contactInDB"
+                  }
+                }
               }
             }
           }
         },
-        "responses": {
-          "201": {
-            "description": "Successfully created a contact",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 201
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully created a contact"
-                    },
-                    "data": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/contactInDB"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          }
+        "401": {
+          "$ref": "#/components/responses/401"
         }
-      },
+      }
+    },
       "get": {
         "tags": [
           "Contacts"
@@ -378,74 +317,62 @@
             }
           }
         ],
-        "requestBody": {
-          "description": "Some properties can be updated - \"name\", \"phoneNumber\", \"email\", \"isFavourite\", \"contactType\", \"photo\"",
-          "required": false,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "phoneNumber": {
-                    "type": "string"
-                  },
-                  "email": {
-                    "type": "string"
-                  },
-                  "isFavourite": {
-                    "type": "boolean"
-                  },
-                  "contactType": {
-                    "type": "string",
-                    "enum": [
-                      "work",
-                      "home",
-                      "personal"
-                    ]
-                  },
-                  "photo": {
-                    "description": "Contact's photo file (*.jpg, *.png, etc.)",
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              },
-              "encoding": {
-                "photo": {
-                  "contentType": "image/*"
-                }
-              },
-              "examples": {
-                "example1": {
-                  "summary": "Example with photo",
-                  "value": {
-                    "phoneNumber": "+3809999999",
-                    "email": "isidora_duncan@ui.com",
-                    "photo": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTExMVF..."
-                  }
-                }
-              }
-            },
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "phoneNumber": {
-                    "type": "string",
-                    "example": "+3809999999"
-                  },
-                  "email": {
-                    "type": "string",
-                    "example": "isidora_duncan@ui.com"
-                  }
-                }
-              }
-            }
+"requestBody": {
+  "description": "Some properties can be updated - \"name\", \"phoneNumber\", \"email\", \"isFavourite\", \"contactType\", \"photo\"",
+  "required": false,
+  "content": {
+    "application/json": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Mel Gibson"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "+3809999999"
+          },
+          "email": {
+            "type": "string",
+            "example": "isidora_duncan@ui.com"
+          },
+          "isFavourite": {
+            "type": "boolean",
+            "example": true
+          },
+          "contactType": {
+            "type": "string",
+            "enum": [
+              "work",
+              "home",
+              "personal"
+            ],
+            "example": "work"
+          },
+          "photo": {
+            "description": "Link to contact's photo or base64 encoded image",
+            "type": "string",
+            "example": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTExMVF..."
           }
-        },
+        }
+      },
+      "examples": {
+        "example1": {
+          "summary": "Example with photo",
+          "value": {
+            "name": "Mel Gibson",
+            "phoneNumber": "+3809999999",
+            "email": "isidora_duncan@ui.com",
+            "isFavourite": true,
+            "contactType": "work",
+            "photo": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTExMVF..."
+          }
+        }
+      }
+    }
+  }
+},
         "responses": {
           "200": {
             "description": "Contact updated successfully",

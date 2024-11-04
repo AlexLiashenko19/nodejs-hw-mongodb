@@ -16,45 +16,30 @@ requestBody:
   description: Some properties can be updated - "name", "phoneNumber", "email", "isFavourite", "contactType", "photo"
   required: false
   content:
-    multipart/form-data:
+    application/json:
       schema:
         type: object
         properties:
           name:
             type: string
-          phoneNumber:
-            type: string
-          email:
-            type: string
-          isFavourite:
-            type: boolean
-          contactType:
-            type: string
-            enum: ['work', 'home', 'personal']
-          photo:
-            description: Contact's photo file (*.jpg, *.png, etc.)
-            type: string
-            format: binary
-      encoding:
-        photo:
-          contentType: image/*
-      examples:
-        example1:
-          summary: Example with photo
-          value:
-            phoneNumber: '+3809999999'
-            email: isidora_duncan@ui.com
-            photo: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTExMVF...'
-    application/json:
-      schema:
-        type: object
-        properties:
+            example: 'Mel Gibson'
           phoneNumber:
             type: string
             example: '+3809999999'
           email:
             type: string
             example: 'isidora_duncan@ui.com'
+          isFavourite:
+            type: boolean
+            example: true
+          contactType:
+            type: string
+            enum: ['work', 'home', 'personal']
+            example: 'work'
+          photo:
+            description: "Link to contact's photo or base64 encoded image"
+            type: string
+            example: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTExMVF..."
 responses:
   '200':
     description: Contact updated successfully
@@ -66,7 +51,7 @@ responses:
             _id:
               description: "Contact's id"
               type: string
-              example: 6655a67a37bc0571c96d9655
+              example: '6655a67a37bc0571c96d9655'
             name:
               description: "Contact's name"
               type: string
@@ -92,18 +77,17 @@ responses:
               type: string
               example: 'https://res.cloudinary.com/dxur5yuus/image/upload/v1717748118/lpzhpmvrcnsa83lc25ux.jpg'
             userId:
-              description: Contact's user id (internal application data)
+              description: "Contact's user id (internal application data)"
               type: string
-              example: 65e4decdd286b30065d54af9
+              example: '65e4decdd286b30065d54af9'
             createdAt:
-              description: Database timestamp (auto-generated)
+              description: "Database timestamp (auto-generated)"
               type: string
               example: '2024-06-16T05:52:08.998Z'
             updatedAt:
-              description: Database timestamp (auto-generated)
+              description: "Database timestamp (auto-generated)"
               type: string
               example: '2024-06-16T05:52:08.998Z'
-
   '401':
     $ref: '../../../components/responses/401.yaml'
   '404':

@@ -7,7 +7,7 @@ security:
   - bearerAuth: []
 requestBody:
   content:
-    multipart/form-data:
+    application/json:
       schema:
         type: object
         required:
@@ -32,26 +32,9 @@ requestBody:
             type: string
             enum: ['work', 'home', 'personal']
           photo:
-            description: Contact's photo file (*.jpg, *.png)
+            description: "Link to contact's photo or base64 encoded image"
             type: string
-            format: binary
-      encoding:
-        photo:
-          contentType: image/*
-      examples:
-        example1:
-          summary: Example with photo
-          value:
-            name: Mel Gibson
-            phoneNumber: '+380123456789'
-            email: MEEELLL@ui.com
-            isFavourite: true
-            contactType: work
-            photo: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTExMVF...'
-    application/json:
-      schema:
-        type: object
-        $ref: '../../components/schemas/contact.yaml'
+            example: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTExMVF..."
 responses:
   '201':
     description: Successfully created a contact
