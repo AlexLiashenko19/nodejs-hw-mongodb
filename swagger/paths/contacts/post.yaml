@@ -53,6 +53,26 @@ requestBody:
         type: object
         $ref: '../../components/schemas/contact.yaml'
 responses:
+  '200':
+    description: 'Create contact'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully create contact!
+            data:
+              type: object
+              $ref: '../../components/schemas/contactInDB.yaml'
   '201':
     description: Successfully created a contact
     content:
