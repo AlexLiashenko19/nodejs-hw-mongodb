@@ -17,6 +17,24 @@ servers:
   - url: https://nodejs-hw-mongodb-hyy4.onrender.com/api-docs
   # - url: localhost:3000
 paths:
+  /auth/register:
+    post:
+      $ref: '../swagger/paths/auth/register_post.yaml'
+  /auth/login:
+    post:
+      $ref: '../swagger/paths/auth/login_post.yaml'
+  /auth/refresh:
+    post:
+      $ref: '../swagger/paths/auth/refresh_post.yaml'
+  /auth/send-reset-email:
+    post:
+      $ref: '../swagger/paths/auth/send-reset-email_post.yaml'
+  /auth/reset-pwd:
+    post:
+      $ref: '../swagger/paths/auth/reset-pwd_post.yaml'
+  /auth/logout:
+    post:
+      $ref: '../swagger/paths/auth/logout_post.yaml'
   /contacts:
     post:
       $ref: '../swagger/paths/contacts/post.yaml'
